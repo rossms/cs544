@@ -3,6 +3,8 @@
 # https://www.tutorialspoint.com/python/python_networking.htm
 
 import socket               # Import socket module
+import json
+import io
 from threading import *
 #from client import clientObj
 
@@ -17,6 +19,9 @@ class clientObj(Thread):
         self.sock = socket
         self.addr = address
         self.username = ""
+        self.password = ""
+        self.hostname = ""
+        self.alias = ""
         self.start()
 
     def run(self):
@@ -32,10 +37,27 @@ class clientObj(Thread):
             print body
 
             if command == "001":
-                self.sock.send("your registered!")
                 chunks = body.split("|")
-
                 self.username = chunks[0]
+                self.password = chunks[1]
+                self.hostname = chunks[2]
+                self.alias = chunks[3]
+
+                # save registration info in db (text file for purposes of this implementation)
+                data = {}
+                data['username'] = self.username
+                data['password'] = self.password
+                data['hostname'] = self.hostname
+                data['alias'] = self.alias
+                with io.open('data.txt', 'w', encoding='utf-8') as datafile:
+                    datafile.write(json.dumps(data,ensure_ascii=False))
+                #json_data = json.dump(data)
+
+
+                self.sock.send("you're registered!")
+
+
+
                 print received
 
             elif command == "002":
