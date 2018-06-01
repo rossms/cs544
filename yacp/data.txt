@@ -1,1 +1,1 @@
-{"username": "testuser2", "alias": "testalias", "password": "testpass", "hostname": "testhost"}
+{"username": "tu", "alias": "ta", "password": "tp", "hostname": "testhost"}

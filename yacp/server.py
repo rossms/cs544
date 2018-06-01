@@ -6,12 +6,14 @@ import socket               # Import socket module
 import json
 import io
 from threading import *
+from messages.clientMessages import *
 #from client import clientObj
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)         # Create a socket object
-host = socket.gethostname() # Get local machine name
-port = 12345                # Reserve a port for your service.
-s.bind((host, port))        # Bind to the port
+# global variables
+
+version = "1.0"
+
+# functions
 
 class clientObj(Thread):
     def __init__(self, socket, address):
@@ -27,17 +29,17 @@ class clientObj(Thread):
     def run(self):
         print self.addr
         print 'Got connection from', self.addr
-        self.sock.send(b'Thank you for connecting,')
+        self.sock.send(b'Thank you for connecting.')
         while 1:
             received = self.sock.recv(1024).decode()
             command = received[3:6]
             body = received[6:-2]
 
-            print command
-            print body
+            #print command
+            #print body
 
             if command == "001":
-                chunks = body.split("|")
+                chunks = body.split("||")
                 self.username = chunks[0]
                 self.password = chunks[1]
                 self.hostname = chunks[2]
@@ -49,16 +51,21 @@ class clientObj(Thread):
                 data['password'] = self.password
                 data['hostname'] = self.hostname
                 data['alias'] = self.alias
-                with io.open('data.txt', 'w', encoding='utf-8') as datafile:
-                    datafile.write(json.dumps(data,ensure_ascii=False))
-                #json_data = json.dump(data)
 
-
-                self.sock.send("you're registered!")
-
-
-
-                print received
+                try:
+                    with io.open('data.txt', 'w', encoding='utf-8') as datafile:
+                        datafile.write(json.dumps(data,ensure_ascii=False))
+                    t = FiveZeroOne("R", "Registration Successful")
+                    buffer = version+"501"+t.s+"||"+t.t+"||"+"\\\\"
+                    self.sock.send(buffer)
+                except IOError:
+                    t = NineZeroTwo("User registration", "Unable to register user")
+                    buffer = version+"902"+t.a+"||"+t.t+"||"+"\\\\"
+                    self.sock.send(buffer)
+                except:
+                    t = NineZeroOne("Unknown error has occurred. Please try again later")
+                buffer = version+"901"+t.t+"||"+"\\\\"
+                self.sock.send(buffer)
 
             elif command == "002":
                 self.sock.send("registration updated")
@@ -85,6 +92,13 @@ class clientObj(Thread):
                 s.close()
             #print('Client sent:', self.sock.recv(1024).decode())
             #self.sock.send(b'Thank you for connectingggggg,')
+
+# main
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)         # Create a socket object
+host = socket.gethostname() # Get local machine name
+port = 12345                # Reserve a port for your service.
+s.bind((host, port))        # Bind to the port
 
 s.listen(5)                 # Now wait for client connection.
 

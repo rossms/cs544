@@ -6,58 +6,109 @@ import socket               # Import socket module
 from messages.clientMessages import *
 from threading import *
 
+# global variables
+version = "1.0"
+keepOpen = 1
+
+# functions
+def run(alive, currentState):
+    while alive:
+
+        if currentState == 1:
+            print "Welcome. You're currently not signed in. Let's fix that. If this is your " \
+                  "first time, please register(r). If you've previously registered, please " \
+                  "connect(c). Thanks!"
+            action = raw_input()
+            if action == "r":
+                print "Enter a username"
+                username = raw_input()
+                print "Enter a password"
+                password = raw_input()
+                print "Enter a device alias"
+                alias = raw_input()
+
+                t = ZeroZeroOne(username,password,"testhost",alias)
+                buffer = version+"001"+t.u +"||"+ t.p +"||"+ t.h +"||"+ t.c +"||"+ "\\\\"
+                s.send(buffer)
+                r = s.recv(1024).decode()
+                command = r[3:6]
+                body = r[6:-2]
+                chunks = body.split("||")
+
+                if command == "501":
+                    print chunks[1]
+                elif command == "902":
+                    print chunks[2]
+                else:
+                    print chunks[0]
+
+
+
+            elif action == "c":
+                print "Enter your username:"
+                username = raw_input()
+                print "Enter your password:"
+                password = raw_input()
+                print "Enter which device you're on:"
+                alias = raw_input()
+
+                t = ZeroZeroThree(username,password,alias)
+                buffer = version+"004"+t.u+"||"++t.p+"||"++t.a+"||"+"\\\\"
+                s.send(buffer)
+                r = s.recv(1024).decode()
+                print r
+            else:
+                print "Invalid option!!!"
+
+
+
+        # print "Choose option: Register(r), update(u), send(s), close(x), get(g)"
+        # action = raw_input()
+        #
+        #
+        #
+        # if action == "u":
+        #     t = ZeroZeroOne("testuser","testpass","testhost","testalias")
+        #     buffer = "1.0"+"002"+t.u +"|"+ t.p +"|"+ t.h +"|"+ t.c +"|"+ "\\\\"
+        #     s.send(buffer)
+        #     r = s.recv(1024).decode()
+        #     print r
+        #
+        # if action == "s":
+        #     t = ZeroZeroFour("testuser1","testuser2","hey there")
+        #     buffer = "1.0"+"004"+t.s+"|"+t.r+"|"+t.t+"|"+ "\\\\"
+        #     s.send(buffer)
+        #     r = s.recv(1024).decode()
+        #     print r
+        #
+        # if action == "x":
+        #     t = ZeroZeroFive("testuser","testalias")
+        #     buffer = "1.0"+"005"+t.u+"|"+t.c+"|"+ "\\\\"
+        #     s.send(buffer)
+        #     break
+        #
+        # if action =="g":
+        #     r = s.recv(1024).decode()
+        #     print r
+
+# main
+currentState = 0
+
 s = socket.socket()         # Create a socket object
 host = socket.gethostname() # Get local machine name
 port = 12345                # Reserve a port for your service.
 
 s.connect((host, port))
 r = s.recv(1024).decode()
-print r
 
-keepopen = 1
+connAttempt = r
+if connAttempt != "":
+    currentState = 1
+    print connAttempt
 
-def run(alive):
-    while alive:
-
-        print "Choose option: Register(r), update(u), send(s), close(x), get(g)"
-        action = raw_input()
-
-        if action == "r":
-            print "Enter username"
-            username = raw_input()
-            t = ZeroZeroOne(username,"testpass","testhost","testalias")
-            buffer = "1.0"+"001"+t.u +"|"+ t.p +"|"+ t.h +"|"+ t.c +"|"+ "\\\\"
-            s.send(buffer)
-            r = s.recv(1024).decode()
-            print r
-
-        if action == "u":
-            t = ZeroZeroOne("testuser","testpass","testhost","testalias")
-            buffer = "1.0"+"002"+t.u +"|"+ t.p +"|"+ t.h +"|"+ t.c +"|"+ "\\\\"
-            s.send(buffer)
-            r = s.recv(1024).decode()
-            print r
-
-        if action == "s":
-            t = ZeroZeroFour("testuser1","testuser2","hey there")
-            buffer = "1.0"+"004"+t.s+"|"+t.r+"|"+t.t+"|"+ "\\\\"
-            s.send(buffer)
-            r = s.recv(1024).decode()
-            print r
-
-        if action == "x":
-            t = ZeroZeroFive("testuser","testalias")
-            buffer = "1.0"+"005"+t.u+"|"+t.c+"|"+ "\\\\"
-            s.send(buffer)
-            break
-
-        if action =="g":
-            r = s.recv(1024).decode()
-            print r
-
-
-
-run(keepopen)
+    run(keepOpen, currentState)
+else:
+    print "Connection attempt failed, please try again later."
 
 
 #print action
