@@ -11,8 +11,11 @@ version = "1.0"
 keepOpen = 1
 
 # functions
-def run(alive, currentState):
+def run(alive):
     while alive:
+        global currentState
+        global currentUser
+        global currentAlias
 
         if currentState == 1:
             print "Welcome. You're currently not signed in. Let's fix that. If this is your " \
@@ -37,12 +40,13 @@ def run(alive, currentState):
 
                 if command == "501":
                     print chunks[1]
+                    currentState = 2
+                    currentUser = username
+                    currentAlias = alias
                 elif command == "902":
                     print chunks[2]
                 else:
                     print chunks[0]
-
-
 
             elif action == "c":
                 print "Enter your username:"
@@ -53,13 +57,61 @@ def run(alive, currentState):
                 alias = raw_input()
 
                 t = ZeroZeroThree(username,password,alias)
-                buffer = version+"004"+t.u+"||"++t.p+"||"++t.a+"||"+"\\\\"
+                buffer = version+"003"+t.u+"||"++t.p+"||"++t.a+"||"+"\\\\"
                 s.send(buffer)
                 r = s.recv(1024).decode()
-                print r
+                command = r[3:6]
+                body = r[6:-2]
+                chunks = body.split("||")
+
+                if command == "503":
+                    print chunks[1]
+                    currentState = 2
+                    currentUser = username
+                    currentAlias = alias
+                elif command == "902":
+                    print chunks[2]
+                else:
+                    print chunks[0]
             else:
                 print "Invalid option!!!"
 
+        elif currentState == 2:
+            print "Choose option: send(s) a message, close(x) connection or update(u) registration info."
+            action = raw_input()
+
+            if action == "s":
+                print "Who would you like to send this message to?"
+                recipient = raw_input()
+                print "What would you like to send?"
+                message = raw_input()
+                t = ZeroZeroFour(currentUser,recipient,message)
+                buffer = version+"004"+t.s+"||"+t.r+"||"+t.t+"||"+ "\\\\"
+                s.send(buffer)
+                r = s.recv(1024).decode()
+                command = r[3:6]
+                body = r[6:-2]
+                chunks = body.split("||")
+
+                if command == "504":
+                    print chunks[1]
+                elif command == "902":
+                    print chunks[2]
+                else:
+                    print chunks[0]
+
+            elif action == "x":
+                t = ZeroZeroFive(currentUser,currentAlias)
+                buffer = version+"005"+t.u+"||"+t.c+"||"+ "\\\\"
+                s.send(buffer)
+                currentState = 1
+                break
+            elif action == "u":
+                print "u"
+            else:
+                print "Invalid option!!!"
+        else:
+            print "suspended"
 
 
         # print "Choose option: Register(r), update(u), send(s), close(x), get(g)"
@@ -93,6 +145,8 @@ def run(alive, currentState):
 
 # main
 currentState = 0
+currentUser = ""
+currentAlias = ""
 
 s = socket.socket()         # Create a socket object
 host = socket.gethostname() # Get local machine name
@@ -105,8 +159,7 @@ connAttempt = r
 if connAttempt != "":
     currentState = 1
     print connAttempt
-
-    run(keepOpen, currentState)
+    run(keepOpen)
 else:
     print "Connection attempt failed, please try again later."
 

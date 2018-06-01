@@ -35,9 +35,6 @@ class clientObj(Thread):
             command = received[3:6]
             body = received[6:-2]
 
-            #print command
-            #print body
-
             if command == "001":
                 chunks = body.split("||")
                 self.username = chunks[0]
@@ -68,11 +65,17 @@ class clientObj(Thread):
                 self.sock.send(buffer)
 
             elif command == "002":
+                # find saved registration info and update it
                 self.sock.send("registration updated")
                 print received
 
+            elif command == "003":
+                # verify user is registered
+                self.sock.send("connected")
+                print received
+
             elif command == "004":
-                chunks = body.split("|")
+                chunks = body.split("||")
                 recipient = chunks[1]
                 chat = chunks[2]
 
