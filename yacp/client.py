@@ -16,6 +16,7 @@ def run(alive):
         global currentState
         global currentUser
         global currentAlias
+        global currentPassword
 
         if currentState == 1:
             print "Welcome. You're currently not signed in. Let's fix that. If this is your " \
@@ -43,6 +44,7 @@ def run(alive):
                     currentState = 2
                     currentUser = username
                     currentAlias = alias
+                    currentPassword = password
                 elif command == "902":
                     print chunks[2]
                 else:
@@ -69,6 +71,7 @@ def run(alive):
                     currentState = 2
                     currentUser = username
                     currentAlias = alias
+                    currentPassword = password
                 elif command == "902":
                     print chunks[2]
                 else:
@@ -107,7 +110,36 @@ def run(alive):
                 currentState = 1
                 break
             elif action == "u":
-                print "u"
+                print "What would like to update: username(u), password(p) or update alias(a)?"
+                updateAction = raw_input()
+
+                if updateAction == "u":
+                    print "Enter a new username"
+                    updateString = raw_input()
+                elif updateAction == "p":
+                    print "Enter a new password"
+                    updateString = raw_input()
+                elif updateAction == "a":
+                    print "Enter a new alias"
+                    updateString = raw_input()
+                else:
+                    print "Invalid option!!!"
+
+                t = ZeroZeroTwo(currentUser,currentPassword,action.toUpper,updateString)
+                buffer = version+"002"+t.u+"||"+t.p+"||"+t.c+"||"+t.f+"||"+t.t+"||"+"\\\\"
+                s.send(buffer)
+                r = s.recv(1024).decode()
+                command = r[3:6]
+                body = r[6:-2]
+                chunks = body.split("||")
+
+                if command == "501":
+                    print chunks[1]
+                    currentState = 2
+                elif command == "902":
+                    print chunks[2]
+                else:
+                    print chunks[0]
             else:
                 print "Invalid option!!!"
         else:
@@ -147,6 +179,7 @@ def run(alive):
 currentState = 0
 currentUser = ""
 currentAlias = ""
+currentPassword = ""
 
 s = socket.socket()         # Create a socket object
 host = socket.gethostname() # Get local machine name

@@ -79,20 +79,24 @@ class clientObj(Thread):
                 recipient = chunks[1]
                 chat = chunks[2]
 
+                t = FiveZeroFour("A","Message Received")
+                buffer = version+"504"+t.s+"||"+t.t+"||"+"\\\\"
+                self.sock.send(buffer)
+                # TODO : if user or recipient is unknown, send back an error
+
+
                 for c in connections:
                     if c.username == recipient:
                         c.sock.send(chat)
-
-
-                self.sock.send("chat ack from: " + self.username)
-
-
-
-                print connections
+                # TODO : if recipient is not in connections, store message for next connection
+                #print connections
 
             elif command == "005":
-                c.close()
-                s.close()
+                self.sock.close()
+
+                #c.close()
+
+                #s.close()
             #print('Client sent:', self.sock.recv(1024).decode())
             #self.sock.send(b'Thank you for connectingggggg,')
 
