@@ -52,17 +52,17 @@ class clientObj(Thread):
                 try:
                     with io.open('data.txt', 'w', encoding='utf-8') as datafile:
                         datafile.write(json.dumps(data,ensure_ascii=False))
-                    t = FiveZeroOne("R", "Registration Successful")
-                    buffer = version+"501"+t.s+"||"+t.t+"||"+"\\\\"
-                    self.sock.send(buffer)
+                    fiveZeroOne = FiveZeroOne("R", "Registration Successful")
+                    fiveZeroOneBuffer = version+"501"+fiveZeroOne.s+"||"+fiveZeroOne.t+"||"+"\\\\"
+                    self.sock.send(fiveZeroOneBuffer)
                 except IOError:
-                    t = NineZeroTwo("User registration", "Unable to register user")
-                    buffer = version+"902"+t.a+"||"+t.t+"||"+"\\\\"
-                    self.sock.send(buffer)
+                    nineZeroTwo = NineZeroTwo("User registration", "Unable to register user")
+                    nineZeroTwoBuffer = version+"902"+nineZeroTwo.a+"||"+nineZeroTwo.t+"||"+"\\\\"
+                    self.sock.send(nineZeroTwoBuffer)
                 except:
-                    t = NineZeroOne("Unknown error has occurred. Please try again later")
-                buffer = version+"901"+t.t+"||"+"\\\\"
-                self.sock.send(buffer)
+                    nineZeroOne = NineZeroOne("Unknown error has occurred. Please try again later")
+                    nineZeroOneBuffer = version+"901"+nineZeroOne.t+"||"+"\\\\"
+                    self.sock.send(nineZeroOneBuffer)
 
             elif command == "002":
                 # find saved registration info and update it
@@ -79,9 +79,9 @@ class clientObj(Thread):
                 recipient = chunks[1]
                 chat = chunks[2]
 
-                t = FiveZeroFour("A","Message Received")
-                buffer = version+"504"+t.s+"||"+t.t+"||"+"\\\\"
-                self.sock.send(buffer)
+                fiveZeroFour = FiveZeroFour("A","Message Received")
+                fiveZeroFourBuffer = version+"504"+fiveZeroFour.s+"||"+fiveZeroFour.t+"||"+"\\\\"
+                self.sock.send(fiveZeroFourBuffer)
                 # TODO : if user or recipient is unknown, send back an error
 
 

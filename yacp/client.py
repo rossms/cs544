@@ -31,12 +31,13 @@ def run(alive):
                 print "Enter a device alias"
                 alias = raw_input()
 
-                t = ZeroZeroOne(username,password,"testhost",alias)
-                buffer = version+"001"+t.u +"||"+ t.p +"||"+ t.h +"||"+ t.c +"||"+ "\\\\"
-                s.send(buffer)
-                r = s.recv(1024).decode()
-                command = r[3:6]
-                body = r[6:-2]
+                zeroZeroOne = ZeroZeroOne(username,password,"testhost",alias)
+                zeroZeroOneBuffer = version+"001"+zeroZeroOne.u +"||"+ zeroZeroOne.p +"||"+ zeroZeroOne.h +"||"+ \
+                         zeroZeroOne.c +"||"+ "\\\\"
+                s.send(zeroZeroOneBuffer)
+                zeroZeroOneRecieve = s.recv(1024).decode()
+                command = zeroZeroOneRecieve[3:6]
+                body = zeroZeroOneRecieve[6:-2]
                 chunks = body.split("||")
 
                 if command == "501":
@@ -58,12 +59,12 @@ def run(alive):
                 print "Enter which device you're on:"
                 alias = raw_input()
 
-                t = ZeroZeroThree(username,password,alias)
-                buffer = version+"003"+t.u+"||"++t.p+"||"++t.a+"||"+"\\\\"
-                s.send(buffer)
-                r = s.recv(1024).decode()
-                command = r[3:6]
-                body = r[6:-2]
+                zeroZeroThree = ZeroZeroThree(username,password,alias)
+                zeroZeroThreeBuffer = version+"003"+zeroZeroThree.u+"||"+zeroZeroThree.p+"||"+zeroZeroThree.c+"||"+"\\\\"
+                s.send(zeroZeroThreeBuffer)
+                zeroZeroThreeRecieve = s.recv(1024).decode()
+                command = zeroZeroThreeRecieve[3:6]
+                body = zeroZeroThreeRecieve[6:-2]
                 chunks = body.split("||")
 
                 if command == "503":
@@ -88,12 +89,12 @@ def run(alive):
                 recipient = raw_input()
                 print "What would you like to send?"
                 message = raw_input()
-                t = ZeroZeroFour(currentUser,recipient,message)
-                buffer = version+"004"+t.s+"||"+t.r+"||"+t.t+"||"+ "\\\\"
-                s.send(buffer)
-                r = s.recv(1024).decode()
-                command = r[3:6]
-                body = r[6:-2]
+                zeroZeroFour = ZeroZeroFour(currentUser,recipient,message)
+                zeroZeroFourBuffer = version+"004"+zeroZeroFour.s+"||"+zeroZeroFour.r+"||"+zeroZeroFour.t+"||"+ "\\\\"
+                s.send(zeroZeroFourBuffer)
+                zeroZeroFourReceive = s.recv(1024).decode()
+                command = zeroZeroFourReceive[3:6]
+                body = zeroZeroFourReceive[6:-2]
                 chunks = body.split("||")
 
                 if command == "504":
@@ -104,9 +105,9 @@ def run(alive):
                     print chunks[0]
 
             elif action == "x":
-                t = ZeroZeroFive(currentUser,currentAlias)
-                buffer = version+"005"+t.u+"||"+t.c+"||"+ "\\\\"
-                s.send(buffer)
+                zeroZeroFive = ZeroZeroFive(currentUser,currentAlias)
+                zeroZeroFiveBuffer = version+"005"+zeroZeroFive.u+"||"+zeroZeroFive.c+"||"+ "\\\\"
+                s.send(zeroZeroFiveBuffer)
                 currentState = 1
                 break
             elif action == "u":
@@ -125,12 +126,13 @@ def run(alive):
                 else:
                     print "Invalid option!!!"
 
-                t = ZeroZeroTwo(currentUser,currentPassword,action.toUpper,updateString)
-                buffer = version+"002"+t.u+"||"+t.p+"||"+t.c+"||"+t.f+"||"+t.t+"||"+"\\\\"
-                s.send(buffer)
-                r = s.recv(1024).decode()
-                command = r[3:6]
-                body = r[6:-2]
+                zeroZeroTwo = ZeroZeroTwo(currentUser,currentPassword,action.toUpper,updateString)
+                zeroZeroTwoBuffer = version+"002"+zeroZeroTwo.u+"||"+zeroZeroTwo.p+"||"+zeroZeroTwo.c+"||"+zeroZeroTwo.f+\
+                         "||"+zeroZeroTwo.t+"||"+"\\\\"
+                s.send(zeroZeroTwoBuffer)
+                zeroZeroTwoReceive = s.recv(1024).decode()
+                command = zeroZeroTwoReceive[3:6]
+                body = zeroZeroTwoReceive[6:-2]
                 chunks = body.split("||")
 
                 if command == "501":
@@ -140,6 +142,9 @@ def run(alive):
                     print chunks[2]
                 else:
                     print chunks[0]
+            elif action == "g":
+                r = s.recv(1024).decode()
+                print r
             else:
                 print "Invalid option!!!"
         else:
