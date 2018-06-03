@@ -110,6 +110,7 @@ def run(alive):
                 zeroZeroFiveBuffer = version+"005"+zeroZeroFive.u+"||"+zeroZeroFive.c+"||"+ "\\\\"
                 s.send(zeroZeroFiveBuffer)
                 currentState = 1
+                print "Goodbye"
                 break
             elif action == "u":
                 print "What would like to update: username(u), password(p) or update alias(a)?"
@@ -150,36 +151,6 @@ def run(alive):
         else:
             print "suspended"
 
-
-        # print "Choose option: Register(r), update(u), send(s), close(x), get(g)"
-        # action = raw_input()
-        #
-        #
-        #
-        # if action == "u":
-        #     t = ZeroZeroOne("testuser","testpass","testhost","testalias")
-        #     buffer = "1.0"+"002"+t.u +"|"+ t.p +"|"+ t.h +"|"+ t.c +"|"+ "\\\\"
-        #     s.send(buffer)
-        #     r = s.recv(1024).decode()
-        #     print r
-        #
-        # if action == "s":
-        #     t = ZeroZeroFour("testuser1","testuser2","hey there")
-        #     buffer = "1.0"+"004"+t.s+"|"+t.r+"|"+t.t+"|"+ "\\\\"
-        #     s.send(buffer)
-        #     r = s.recv(1024).decode()
-        #     print r
-        #
-        # if action == "x":
-        #     t = ZeroZeroFive("testuser","testalias")
-        #     buffer = "1.0"+"005"+t.u+"|"+t.c+"|"+ "\\\\"
-        #     s.send(buffer)
-        #     break
-        #
-        # if action =="g":
-        #     r = s.recv(1024).decode()
-        #     print r
-
 # main
 currentState = 0
 currentUser = ""
@@ -201,17 +172,7 @@ if connAttempt != "":
 else:
     print "Connection attempt failed, please try again later."
 
-
-#print action
-
-#print(r[:1])
-
-
-#s.close                     # Close the socket when done
-
-
-
-
+s.close()
 
 # TODO: All client to server messages
 

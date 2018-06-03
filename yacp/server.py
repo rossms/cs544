@@ -199,16 +199,10 @@ class clientObj(Thread):
                     nineZeroOneBuffer = version+"901"+nineZeroOne.t+"||"+"\\\\"
                     self.sock.send(nineZeroOneBuffer)
 
-
-
             elif command == "005":
+                connections.remove(self)
                 self.sock.close()
-                s.close()
-                #c.close()
-
-                #s.close()
-            #print('Client sent:', self.sock.recv(1024).decode())
-            #self.sock.send(b'Thank you for connectingggggg,')
+                break
 
 # main
 
@@ -219,13 +213,9 @@ s.bind((host, port))        # Bind to the port
 
 s.listen(5)                 # Now wait for client connection.
 
-# TODO: multithreading
-#c, addr = s.accept()     # Establish connection with client.
-#print 'Got connection from', addr
-#c.send('Thank you for connecting')
-
 connections = []
 
+# multithreading
 while True:
     clientsocket, address = s.accept()
     c = clientObj(clientsocket, address)
