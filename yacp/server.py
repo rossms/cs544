@@ -128,9 +128,17 @@ class clientObj(Thread):
 
                 try:
                     if os.path.exists("./data/"+self.username+".txt"):
-                        fiveZeroThree = FiveZeroThree("C", "Connection successful", "")
-                        fiveZeroThreeBuffer = version+"503"+fiveZeroThree.s+"||"+fiveZeroThree.t+"||"+"\\\\"
-                        self.sock.send(fiveZeroThreeBuffer)
+                        with open("./data/"+self.username+".txt", "r") as f:
+                            dataIn = json.load(f)
+                            try:
+                                message = dataIn["message"]
+                                fiveZeroThree = FiveZeroThree("C", "Connection successful", message)
+                                fiveZeroThreeBuffer = version+"503"+fiveZeroThree.s+"||"+fiveZeroThree.t+"||"+fiveZeroThree.m+"||"+"\\\\"
+                                self.sock.send(fiveZeroThreeBuffer)
+                            except:
+                                fiveZeroThree = FiveZeroThree("C", "Connection successful", "")
+                                fiveZeroThreeBuffer = version+"503"+fiveZeroThree.s+"||"+fiveZeroThree.t+"||"+fiveZeroThree.m+"||"+"\\\\"
+                                self.sock.send(fiveZeroThreeBuffer)
                     else:
                         fiveZeroThree = FiveZeroThree("U", "Check username or register", "")
                         fiveZeroThreeBuffer = version+"503"+fiveZeroThree.s+"||"+fiveZeroThree.t+"||"+"\\\\"
@@ -150,19 +158,48 @@ class clientObj(Thread):
 
             elif command == "004":
                 chunks = body.split("||")
+                sender = chunks[0]
                 recipient = chunks[1]
                 chat = chunks[2]
 
-                fiveZeroFour = FiveZeroFour("A","Message Received")
-                fiveZeroFourBuffer = version+"504"+fiveZeroFour.s+"||"+fiveZeroFour.t+"||"+"\\\\"
-                self.sock.send(fiveZeroFourBuffer)
-                # TODO : if user or recipient is unknown, send back an error
+                try:
+                    if os.path.exists("./data/"+recipient+".txt"):
+                        for connection in connections:
+                            if connection.username == recipient:
+                                connection.sock.send(chat)
+                                break
+                        else:
+                            with open("./data/"+recipient+".txt", "r") as f:
+                                dataIn = json.load(f)
+                                recipientUsername = dataIn["username"]
+                                recipientPassword = dataIn["password"]
+                                recipientHostname = dataIn["hostname"]
+                                recipientAlias = dataIn["alias"]
 
-                for c in connections:
-                    if c.username == recipient:
-                        c.sock.send(chat)
-                # TODO : if recipient is not in connections, store message for next connection
-                #print connections
+                                dataOut = {}
+                                dataOut['username'] = recipientUsername
+                                dataOut['password'] = recipientPassword
+                                dataOut['hostname'] = recipientHostname
+                                dataOut['alias'] = recipientAlias
+                                dataOut['message'] = "message from " + sender + ": " + chat
+                                with io.open("./data/"+recipient+".txt", "w", encoding="utf-8") as datafile:
+                                    datafile.write(json.dumps(dataOut, ensure_ascii=False))
+
+                        fiveZeroFour = FiveZeroFour("A","Message Received")
+                        fiveZeroFourBuffer = version+"504"+fiveZeroFour.s+"||"+fiveZeroFour.t+"||"+"\\\\"
+                        self.sock.send(fiveZeroFourBuffer)
+
+                    else:
+                        fiveZeroFour = FiveZeroFour("R","Check username")
+                        fiveZeroFourBuffer = version+"504"+fiveZeroFour.s+"||"+fiveZeroFour.t+"||"+"\\\\"
+                        self.sock.send(fiveZeroFourBuffer)
+
+                except:
+                    nineZeroOne = NineZeroOne("Unknown error has occurred. Please try again later")
+                    nineZeroOneBuffer = version+"901"+nineZeroOne.t+"||"+"\\\\"
+                    self.sock.send(nineZeroOneBuffer)
+
+
 
             elif command == "005":
                 self.sock.close()

@@ -1,1 +1,0 @@
-{"username": "tu2", "alias": "ta2", "password": "tp", "hostname": "testhost"}

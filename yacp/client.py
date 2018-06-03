@@ -69,6 +69,7 @@ def run(alive):
 
                 if command == "503":
                     print chunks[1]
+                    print chunks[2]
                     currentState = 2
                     currentUser = username
                     currentAlias = alias
