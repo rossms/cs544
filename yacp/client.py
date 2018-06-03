@@ -126,9 +126,8 @@ def run(alive):
                 else:
                     print "Invalid option!!!"
 
-                zeroZeroTwo = ZeroZeroTwo(currentUser,currentPassword,action.toUpper,updateString)
-                zeroZeroTwoBuffer = version+"002"+zeroZeroTwo.u+"||"+zeroZeroTwo.p+"||"+zeroZeroTwo.c+"||"+zeroZeroTwo.f+\
-                         "||"+zeroZeroTwo.t+"||"+"\\\\"
+                zeroZeroTwo = ZeroZeroTwo(currentUser,currentPassword,currentAlias,updateAction.upper(),updateString)
+                zeroZeroTwoBuffer = version+"002"+zeroZeroTwo.u+"||"+zeroZeroTwo.p+"||"+zeroZeroTwo.c+"||"+zeroZeroTwo.f+"||"+zeroZeroTwo.t+"||"+"\\\\"
                 s.send(zeroZeroTwoBuffer)
                 zeroZeroTwoReceive = s.recv(1024).decode()
                 command = zeroZeroTwoReceive[3:6]
@@ -188,7 +187,7 @@ currentPassword = ""
 
 s = socket.socket()         # Create a socket object
 host = socket.gethostname() # Get local machine name
-port = 12345                # Reserve a port for your service.
+port = 9227                # Reserve a port for your service.
 
 s.connect((host, port))
 r = s.recv(1024).decode()

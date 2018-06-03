@@ -5,6 +5,7 @@
 import socket               # Import socket module
 import json
 import io
+import os.path
 from threading import *
 from messages.clientMessages import *
 #from client import clientObj
@@ -39,7 +40,7 @@ class clientObj(Thread):
                 chunks = body.split("||")
                 self.username = chunks[0]
                 self.password = chunks[1]
-                self.hostname = chunks[2]
+                self.hostname = self.addr
                 self.alias = chunks[3]
 
                 # save registration info in db (text file for purposes of this implementation)
@@ -50,8 +51,8 @@ class clientObj(Thread):
                 data['alias'] = self.alias
 
                 try:
-                    with io.open('data.txt', 'w', encoding='utf-8') as datafile:
-                        datafile.write(json.dumps(data,ensure_ascii=False))
+                    with io.open("./data/"+self.username+".txt", "w", encoding="utf-8") as datafile:
+                        datafile.write(json.dumps(data, ensure_ascii=False))
                     fiveZeroOne = FiveZeroOne("R", "Registration Successful")
                     fiveZeroOneBuffer = version+"501"+fiveZeroOne.s+"||"+fiveZeroOne.t+"||"+"\\\\"
                     self.sock.send(fiveZeroOneBuffer)
@@ -65,9 +66,58 @@ class clientObj(Thread):
                     self.sock.send(nineZeroOneBuffer)
 
             elif command == "002":
-                # find saved registration info and update it
-                self.sock.send("registration updated")
                 print received
+                # find saved registration info and update it
+                chunks = body.split("||")
+                flag = chunks[3]
+
+                if flag == "U":
+                    self.username = chunks[4]
+                else:
+                    self.username = chunks[0]
+
+                if flag == "P":
+                    self.password = chunks[4]
+                else:
+                    self.password = chunks[1]
+
+                if flag == "A":
+                    self.alias = chunks[4]
+                else:
+                    self.alias = chunks[2]
+
+                self.hostname = self.addr
+                # save registration info in db (text file for purposes of this implementation)
+                data = {}
+                data['username'] = self.username
+                data['password'] = self.password
+                data['hostname'] = self.hostname
+                data['alias'] = self.alias
+
+                try:
+                    if os.path.exists("./data/"+self.username+".txt"):
+                        with io.open("./data/"+self.username+".txt", "w", encoding="utf-8") as datafile:
+                            datafile.write(json.dumps(data,ensure_ascii=False))
+                        fiveZeroOne = FiveZeroOne("R", "Registration Updated")
+                        fiveZeroOneBuffer = version+"501"+fiveZeroOne.s+"||"+fiveZeroOne.t+"||"+"\\\\"
+                        self.sock.send(fiveZeroOneBuffer)
+
+                    else:
+                        nineZeroTwo = NineZeroTwo("User registration", "User not found to update")
+                        nineZeroTwoBuffer = version+"902"+nineZeroTwo.a+"||"+nineZeroTwo.t+"||"+"\\\\"
+                        self.sock.send(nineZeroTwoBuffer)
+                except OSError:
+                    nineZeroTwo = NineZeroTwo("User registration", "User not found to update")
+                    nineZeroTwoBuffer = version+"902"+nineZeroTwo.a+"||"+nineZeroTwo.t+"||"+"\\\\"
+                    self.sock.send(nineZeroTwoBuffer)
+                except IOError:
+                    nineZeroTwo = NineZeroTwo("User registration", "Unable to register user")
+                    nineZeroTwoBuffer = version+"902"+nineZeroTwo.a+"||"+nineZeroTwo.t+"||"+"\\\\"
+                    self.sock.send(nineZeroTwoBuffer)
+                except:
+                    nineZeroOne = NineZeroOne("Unknown error has occurred. Please try again later")
+                    nineZeroOneBuffer = version+"901"+nineZeroOne.t+"||"+"\\\\"
+                    self.sock.send(nineZeroOneBuffer)
 
             elif command == "003":
                 # verify user is registered
@@ -93,7 +143,7 @@ class clientObj(Thread):
 
             elif command == "005":
                 self.sock.close()
-
+                s.close()
                 #c.close()
 
                 #s.close()
@@ -104,7 +154,7 @@ class clientObj(Thread):
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)         # Create a socket object
 host = socket.gethostname() # Get local machine name
-port = 12345                # Reserve a port for your service.
+port = 9227                # Reserve a port for your service.
 s.bind((host, port))        # Bind to the port
 
 s.listen(5)                 # Now wait for client connection.
