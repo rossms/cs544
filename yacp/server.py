@@ -16,6 +16,7 @@ version = "1.0"
 
 # functions
 
+
 class clientObj(Thread):
     def __init__(self, socket, address):
         Thread.__init__(self)
@@ -66,7 +67,6 @@ class clientObj(Thread):
                     self.sock.send(nineZeroOneBuffer)
 
             elif command == "002":
-                print received
                 # find saved registration info and update it
                 chunks = body.split("||")
                 flag = chunks[3]
@@ -101,7 +101,6 @@ class clientObj(Thread):
                         fiveZeroOne = FiveZeroOne("R", "Registration Updated")
                         fiveZeroOneBuffer = version+"501"+fiveZeroOne.s+"||"+fiveZeroOne.t+"||"+"\\\\"
                         self.sock.send(fiveZeroOneBuffer)
-
                     else:
                         nineZeroTwo = NineZeroTwo("User registration", "User not found to update")
                         nineZeroTwoBuffer = version+"902"+nineZeroTwo.a+"||"+nineZeroTwo.t+"||"+"\\\\"
@@ -121,8 +120,33 @@ class clientObj(Thread):
 
             elif command == "003":
                 # verify user is registered
-                self.sock.send("connected")
-                print received
+                chunks = body.split("||")
+                self.username = chunks[0]
+                self.password = chunks[1]
+                self.hostname = self.addr
+                self.alias = chunks[3]
+
+                try:
+                    if os.path.exists("./data/"+self.username+".txt"):
+                        fiveZeroThree = FiveZeroThree("C", "Connection successful", "")
+                        fiveZeroThreeBuffer = version+"503"+fiveZeroThree.s+"||"+fiveZeroThree.t+"||"+"\\\\"
+                        self.sock.send(fiveZeroThreeBuffer)
+                    else:
+                        fiveZeroThree = FiveZeroThree("U", "Check username or register", "")
+                        fiveZeroThreeBuffer = version+"503"+fiveZeroThree.s+"||"+fiveZeroThree.t+"||"+"\\\\"
+                        self.sock.send(fiveZeroThreeBuffer)
+                except OSError:
+                    nineZeroTwo = NineZeroTwo("User registration", "User not found to update")
+                    nineZeroTwoBuffer = version+"902"+nineZeroTwo.a+"||"+nineZeroTwo.t+"||"+"\\\\"
+                    self.sock.send(nineZeroTwoBuffer)
+                except IOError:
+                    nineZeroTwo = NineZeroTwo("User registration", "Unable to register user")
+                    nineZeroTwoBuffer = version+"902"+nineZeroTwo.a+"||"+nineZeroTwo.t+"||"+"\\\\"
+                    self.sock.send(nineZeroTwoBuffer)
+                except:
+                    nineZeroOne = NineZeroOne("Unknown error has occurred. Please try again later")
+                    nineZeroOneBuffer = version+"901"+nineZeroOne.t+"||"+"\\\\"
+                    self.sock.send(nineZeroOneBuffer)
 
             elif command == "004":
                 chunks = body.split("||")
@@ -133,7 +157,6 @@ class clientObj(Thread):
                 fiveZeroFourBuffer = version+"504"+fiveZeroFour.s+"||"+fiveZeroFour.t+"||"+"\\\\"
                 self.sock.send(fiveZeroFourBuffer)
                 # TODO : if user or recipient is unknown, send back an error
-
 
                 for c in connections:
                     if c.username == recipient:
