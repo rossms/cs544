@@ -146,6 +146,7 @@ class clientObj(Thread):
                             except:
                                 fiveZeroThree = FiveZeroThree("C", "Connection successful", "")
                                 fiveZeroThreeBuffer = version+"503"+fiveZeroThree.s+"||"+fiveZeroThree.t+"||"+fiveZeroThree.m+"||"+"\\\\"
+                                self.state = 2
                                 self.sock.send(fiveZeroThreeBuffer)
                     else:
                         fiveZeroThree = FiveZeroThree("U", "Check username or register", "")
@@ -238,9 +239,7 @@ while True:
 
 # TODO: : DFA
 
-# TODO : User registration
 
-# TODO : Chat
 
 
 

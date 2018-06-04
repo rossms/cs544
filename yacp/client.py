@@ -3,14 +3,45 @@
 # https://www.tutorialspoint.com/python/python_networking.htm
 
 import socket               # Import socket module
+import thread
+import sys
+import errno
+import fcntl, os
+from time import sleep
 from messages.clientMessages import *
 from threading import *
+from select import select
 
 # global variables
 version = "1.0"
 keepOpen = 1
 
 # functions
+
+
+def raw_input_with_timeout():
+    timeout = 2
+    rlist, _, _ = select([sys.stdin], [], [], timeout)
+    if rlist:
+        s = sys.stdin.readline()
+        return s.replace("\n", "")
+    else:
+        return "a"
+
+
+def receive():
+    try:
+        received = s.recv(1024).decode()
+        if received != "":
+            body = received[6:-2]
+            chunks = body.split("||")
+            sender = chunks[0]
+            chat = chunks[2]
+            print sender + " sent you a message: " + chat
+    except:
+        pass
+
+
 def run(alive):
     while alive:
         try:
@@ -67,7 +98,6 @@ def run(alive):
                     command = zeroZeroThreeRecieve[3:6]
                     body = zeroZeroThreeRecieve[6:-2]
                     chunks = body.split("||")
-
                     if command == "503":
                         print chunks[1]
                         print chunks[2]
@@ -83,15 +113,10 @@ def run(alive):
                     print "Invalid option!!!"
 
             elif currentState == 2:
-                received = s.recv(1024).decode()
-                if received != "":
-                    body = received[6:-2]
-                    chunks = body.split("||")
-                    sender = chunks[0]
-                    chat = chunks[2]
-                    print sender + " sent you a message: " + chat
+                receive()
+
                 print "Choose option: send(s) a message, close(x) connection or update(u) registration info."
-                action = raw_input()
+                action = raw_input_with_timeout()
 
                 if action == "s":
                     print "Who would you like to send this message to?"
@@ -162,6 +187,8 @@ def run(alive):
                         chat = chunks[2]
                         print sender + " sent you a message: " + chat
 
+                elif action == "a":
+                    continue
                 else:
                     print "Invalid option!!!"
             else:
@@ -177,11 +204,11 @@ currentUser = ""
 currentAlias = ""
 currentPassword = ""
 
-s = socket.socket()         # Create a socket object
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)         # Create a socket object
 host = socket.gethostname() # Get local machine name
 port = 9227                # Reserve a port for your service.
-
 s.connect((host, port))
+s.settimeout(1)
 r = s.recv(1024).decode()
 
 connAttempt = r

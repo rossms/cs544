@@ -1,1 +1,1 @@
-{"username": "a", "alias": "newalias", "password": "a", "hostname": ["192.168.0.104", 56659]}
+{"username": "a", "alias": "newalias", "message": "message from t: hi there, a", "password": "a", "hostname": ["192.168.0.104", 56659]}
