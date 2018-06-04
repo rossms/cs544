@@ -26,6 +26,7 @@ class clientObj(Thread):
         self.password = ""
         self.hostname = ""
         self.alias = ""
+        self.state = 1
         self.start()
 
     def run(self):
@@ -56,6 +57,7 @@ class clientObj(Thread):
                         datafile.write(json.dumps(data, ensure_ascii=False))
                     fiveZeroOne = FiveZeroOne("R", "Registration Successful")
                     fiveZeroOneBuffer = version+"501"+fiveZeroOne.s+"||"+fiveZeroOne.t+"||"+"\\\\"
+                    self.state = 2
                     self.sock.send(fiveZeroOneBuffer)
                 except IOError:
                     nineZeroTwo = NineZeroTwo("User registration", "Unable to register user")
@@ -67,53 +69,58 @@ class clientObj(Thread):
                     self.sock.send(nineZeroOneBuffer)
 
             elif command == "002":
-                # find saved registration info and update it
-                chunks = body.split("||")
-                flag = chunks[3]
+                if self.state == 2:
+                    # find saved registration info and update it
+                    chunks = body.split("||")
+                    flag = chunks[3]
 
-                if flag == "U":
-                    self.username = chunks[4]
-                else:
-                    self.username = chunks[0]
-
-                if flag == "P":
-                    self.password = chunks[4]
-                else:
-                    self.password = chunks[1]
-
-                if flag == "A":
-                    self.alias = chunks[4]
-                else:
-                    self.alias = chunks[2]
-
-                self.hostname = self.addr
-                # save registration info in db (text file for purposes of this implementation)
-                data = {}
-                data['username'] = self.username
-                data['password'] = self.password
-                data['hostname'] = self.hostname
-                data['alias'] = self.alias
-
-                try:
-                    if os.path.exists("./data/"+self.username+".txt"):
-                        with io.open("./data/"+self.username+".txt", "w", encoding="utf-8") as datafile:
-                            datafile.write(json.dumps(data,ensure_ascii=False))
-                        fiveZeroOne = FiveZeroOne("R", "Registration Updated")
-                        fiveZeroOneBuffer = version+"501"+fiveZeroOne.s+"||"+fiveZeroOne.t+"||"+"\\\\"
-                        self.sock.send(fiveZeroOneBuffer)
+                    if flag == "U":
+                        self.username = chunks[4]
                     else:
+                        self.username = chunks[0]
+
+                    if flag == "P":
+                        self.password = chunks[4]
+                    else:
+                        self.password = chunks[1]
+
+                    if flag == "A":
+                        self.alias = chunks[4]
+                    else:
+                        self.alias = chunks[2]
+
+                    self.hostname = self.addr
+                    # save registration info in db (text file for purposes of this implementation)
+                    data = {}
+                    data['username'] = self.username
+                    data['password'] = self.password
+                    data['hostname'] = self.hostname
+                    data['alias'] = self.alias
+
+                    try:
+                        if os.path.exists("./data/"+self.username+".txt"):
+                            with io.open("./data/"+self.username+".txt", "w", encoding="utf-8") as datafile:
+                                datafile.write(json.dumps(data,ensure_ascii=False))
+                            fiveZeroOne = FiveZeroOne("R", "Registration Updated")
+                            fiveZeroOneBuffer = version+"501"+fiveZeroOne.s+"||"+fiveZeroOne.t+"||"+"\\\\"
+                            self.sock.send(fiveZeroOneBuffer)
+                        else:
+                            nineZeroTwo = NineZeroTwo("User registration", "User not found to update")
+                            nineZeroTwoBuffer = version+"902"+nineZeroTwo.a+"||"+nineZeroTwo.t+"||"+"\\\\"
+                            self.sock.send(nineZeroTwoBuffer)
+                    except OSError:
                         nineZeroTwo = NineZeroTwo("User registration", "User not found to update")
                         nineZeroTwoBuffer = version+"902"+nineZeroTwo.a+"||"+nineZeroTwo.t+"||"+"\\\\"
                         self.sock.send(nineZeroTwoBuffer)
-                except OSError:
-                    nineZeroTwo = NineZeroTwo("User registration", "User not found to update")
-                    nineZeroTwoBuffer = version+"902"+nineZeroTwo.a+"||"+nineZeroTwo.t+"||"+"\\\\"
-                    self.sock.send(nineZeroTwoBuffer)
-                except IOError:
-                    nineZeroTwo = NineZeroTwo("User registration", "Unable to register user")
-                    nineZeroTwoBuffer = version+"902"+nineZeroTwo.a+"||"+nineZeroTwo.t+"||"+"\\\\"
-                    self.sock.send(nineZeroTwoBuffer)
-                except:
+                    except IOError:
+                        nineZeroTwo = NineZeroTwo("User registration", "Unable to register user")
+                        nineZeroTwoBuffer = version+"902"+nineZeroTwo.a+"||"+nineZeroTwo.t+"||"+"\\\\"
+                        self.sock.send(nineZeroTwoBuffer)
+                    except:
+                        nineZeroOne = NineZeroOne("Unknown error has occurred. Please try again later")
+                        nineZeroOneBuffer = version+"901"+nineZeroOne.t+"||"+"\\\\"
+                        self.sock.send(nineZeroOneBuffer)
+                else:
                     nineZeroOne = NineZeroOne("Unknown error has occurred. Please try again later")
                     nineZeroOneBuffer = version+"901"+nineZeroOne.t+"||"+"\\\\"
                     self.sock.send(nineZeroOneBuffer)
@@ -134,6 +141,7 @@ class clientObj(Thread):
                                 message = dataIn["message"]
                                 fiveZeroThree = FiveZeroThree("C", "Connection successful", message)
                                 fiveZeroThreeBuffer = version+"503"+fiveZeroThree.s+"||"+fiveZeroThree.t+"||"+fiveZeroThree.m+"||"+"\\\\"
+                                self.state = 2
                                 self.sock.send(fiveZeroThreeBuffer)
                             except:
                                 fiveZeroThree = FiveZeroThree("C", "Connection successful", "")
@@ -157,49 +165,55 @@ class clientObj(Thread):
                     self.sock.send(nineZeroOneBuffer)
 
             elif command == "004":
-                chunks = body.split("||")
-                sender = chunks[0]
-                recipient = chunks[1]
-                chat = chunks[2]
+                if self.state == 2:
+                    chunks = body.split("||")
+                    sender = chunks[0]
+                    recipient = chunks[1]
+                    chat = chunks[2]
 
-                try:
-                    if os.path.exists("./data/"+recipient+".txt"):
-                        for connection in connections:
-                            if connection.username == recipient:
-                                connection.sock.send(chat)
-                                break
+                    try:
+                        if os.path.exists("./data/"+recipient+".txt"):
+                            for connection in connections:
+                                if connection.username == recipient:
+                                    connection.sock.send(received)
+                                    break
+                            else:
+                                with open("./data/"+recipient+".txt", "r") as f:
+                                    dataIn = json.load(f)
+                                    recipientUsername = dataIn["username"]
+                                    recipientPassword = dataIn["password"]
+                                    recipientHostname = dataIn["hostname"]
+                                    recipientAlias = dataIn["alias"]
+
+                                    dataOut = {}
+                                    dataOut['username'] = recipientUsername
+                                    dataOut['password'] = recipientPassword
+                                    dataOut['hostname'] = recipientHostname
+                                    dataOut['alias'] = recipientAlias
+                                    dataOut['message'] = "message from " + sender + ": " + chat
+                                    with io.open("./data/"+recipient+".txt", "w", encoding="utf-8") as datafile:
+                                        datafile.write(json.dumps(dataOut, ensure_ascii=False))
+
+                            fiveZeroFour = FiveZeroFour("A","Message Received")
+                            fiveZeroFourBuffer = version+"504"+fiveZeroFour.s+"||"+fiveZeroFour.t+"||"+"\\\\"
+                            self.sock.send(fiveZeroFourBuffer)
+
                         else:
-                            with open("./data/"+recipient+".txt", "r") as f:
-                                dataIn = json.load(f)
-                                recipientUsername = dataIn["username"]
-                                recipientPassword = dataIn["password"]
-                                recipientHostname = dataIn["hostname"]
-                                recipientAlias = dataIn["alias"]
+                            fiveZeroFour = FiveZeroFour("R","Check username")
+                            fiveZeroFourBuffer = version+"504"+fiveZeroFour.s+"||"+fiveZeroFour.t+"||"+"\\\\"
+                            self.sock.send(fiveZeroFourBuffer)
 
-                                dataOut = {}
-                                dataOut['username'] = recipientUsername
-                                dataOut['password'] = recipientPassword
-                                dataOut['hostname'] = recipientHostname
-                                dataOut['alias'] = recipientAlias
-                                dataOut['message'] = "message from " + sender + ": " + chat
-                                with io.open("./data/"+recipient+".txt", "w", encoding="utf-8") as datafile:
-                                    datafile.write(json.dumps(dataOut, ensure_ascii=False))
-
-                        fiveZeroFour = FiveZeroFour("A","Message Received")
-                        fiveZeroFourBuffer = version+"504"+fiveZeroFour.s+"||"+fiveZeroFour.t+"||"+"\\\\"
-                        self.sock.send(fiveZeroFourBuffer)
-
-                    else:
-                        fiveZeroFour = FiveZeroFour("R","Check username")
-                        fiveZeroFourBuffer = version+"504"+fiveZeroFour.s+"||"+fiveZeroFour.t+"||"+"\\\\"
-                        self.sock.send(fiveZeroFourBuffer)
-
-                except:
+                    except:
+                        nineZeroOne = NineZeroOne("Unknown error has occurred. Please try again later")
+                        nineZeroOneBuffer = version+"901"+nineZeroOne.t+"||"+"\\\\"
+                        self.sock.send(nineZeroOneBuffer)
+                else:
                     nineZeroOne = NineZeroOne("Unknown error has occurred. Please try again later")
                     nineZeroOneBuffer = version+"901"+nineZeroOne.t+"||"+"\\\\"
                     self.sock.send(nineZeroOneBuffer)
 
             elif command == "005":
+                self.state = 1
                 connections.remove(self)
                 self.sock.close()
                 break
