@@ -1,13 +1,13 @@
-#!/usr/bin/python           # This is client.py file
+#!/usr/bin/python
+
+# client.py
+# Created 05/19/2018 at 2:47PM by rossms
+# This is the client implementation
 
 # https://www.tutorialspoint.com/python/python_networking.htm
 
 import socket               # Import socket module
-import thread
 import sys
-import errno
-import fcntl, os
-from time import sleep
 from messages.clientMessages import *
 from threading import *
 from select import select
@@ -17,6 +17,9 @@ version = "1.0"
 keepOpen = 1
 
 # functions
+
+# do to the CLI implementation of this protocol, the client must handle both waiting for user input as well as
+# checking to see if the server is sending any messages.
 
 
 def raw_input_with_timeout():
@@ -40,6 +43,11 @@ def receive():
             print sender + " sent you a message: " + chat
     except:
         pass
+
+# once connected, the client will loop through the while alive. First it will always validate the current state
+# of the client. Depending on the state, it can perform certain actions. These checks are the DFA gates. All
+# messages get info from the user, and create an instance of the message class. This keeps things neat. It then
+# builds a message buffer and sends the message to the server.
 
 
 def run(alive):
@@ -198,15 +206,19 @@ def run(alive):
         except socket.timeout:
             currentState = 3
 
-# main
+# main. The client state starts a 0. A new socket connection is opened to the server. If successful, the run function
+# is called above.
+
 currentState = 0
 currentUser = ""
 currentAlias = ""
 currentPassword = ""
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)         # Create a socket object
-host = socket.gethostname() # Get local machine name
-port = 9227                # Reserve a port for your service.
+# Create a socket object
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# Get local machine name
+host = socket.gethostname()
+# Reserve a port for your service.
+port = 9227
 s.connect((host, port))
 s.settimeout(1)
 r = s.recv(1024).decode()
@@ -220,8 +232,3 @@ else:
     print "Connection attempt failed, please try again later."
 
 s.close()
-
-# TODO : how to handle user actions through CL?
-
-# TODO: : DFA
-

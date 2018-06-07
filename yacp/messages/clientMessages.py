@@ -1,3 +1,9 @@
+#!/usr/bin/python
+
+# clientMessages.py
+# Created 05/27/2018 at 11:19AM by rossms
+# These are the messages. Separate classes keeps things nice and tidy.
+
 
 class ZeroZeroOne:
     def __init__(self, username, password, hostname, clientalias):

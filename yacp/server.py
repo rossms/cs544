@@ -1,14 +1,18 @@
-#!/usr/bin/python           # This is server.py file
+#!/usr/bin/python
 
+# server.py
+# Created 05/19/2018 at 2:46PM by rossms
+# This is the server implementation
+# client server shell for python was ported from:
 # https://www.tutorialspoint.com/python/python_networking.htm
 
-import socket               # Import socket module
+import socket
 import json
 import io
 import os.path
 from threading import *
 from messages.clientMessages import *
-#from client import clientObj
+
 
 # global variables
 
@@ -16,7 +20,8 @@ version = "1.0"
 
 # functions
 
-
+# A unique clientObj is created for each connection that the server receives. You can see here that as soon as a
+# client is connected, the state is changed from 0 to 1.
 class clientObj(Thread):
     def __init__(self, socket, address):
         Thread.__init__(self)
@@ -220,26 +225,22 @@ class clientObj(Thread):
                 break
 
 # main
+# Create a socket object
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# Get local machine name
+host = socket.gethostname()
+# Reserve a port for your service.
+port = 9227
+# Bind to the port
+s.bind((host, port))
+# Now wait for client connection.
+s.listen(5)
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)         # Create a socket object
-host = socket.gethostname() # Get local machine name
-port = 9227                # Reserve a port for your service.
-s.bind((host, port))        # Bind to the port
-
-s.listen(5)                 # Now wait for client connection.
-
+# empty array. As the server gets client connections, it stores them in this variable.
 connections = []
 
-# multithreading
+# multithreading. Allows multiple client connections.
 while True:
     clientsocket, address = s.accept()
     c = clientObj(clientsocket, address)
     connections.append(c)
-
-
-# TODO: : DFA
-
-
-
-
-

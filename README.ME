@@ -1,10 +1,43 @@
 YACP - Yet Another Chat Protocol
 
-DFA:
-currentState = 0 : Disconnected
-currentState = 1 : Connected, but not signed in
-currentState = 2 : Connected, signed in
-currentState = 3 : Signed in, suspended
+
+Requirements and Prerequisites
+1. YACP is implemented in Python. Specifically, python v2.7. It needs python installed, and has been tested on bash and zsh.
+
+
+Execution:
+1. In one terminal window, cd into the yacp folder.
+2. Start the server: `python server.py`
+3. In a separate terminal window, start a client `python client.py`
+4. In a third terminal, start an additional instance of the client `python client.py`
+
+About YACP:
+
+DFA. Both the client and the server check for the current state of the client instance when making calls the server.
+The DFA states can be seen below.
+
+    currentState = 0 : Disconnected
+    currentState = 1 : Connected, but not signed in
+    currentState = 2 : Connected, signed in
+    currentState = 3 : Signed in, suspended
+
+
+Concurrent. YACP handles multiple clients with a threading model. Each new client is handled with a new instance of
+the ClientObj by the server. The server keeps track of all the current client connections, which is how it knows if
+it should send messages directly to recipients, or should store them for the next time the intended receiver
+connects.
+
+Service. YACP binds to port number 9227 (Y-A-C-P). For the purposes of this implementation, it is running on localhost.
+
+Client. By default the client gets the hostname of the localmachine, and then connects to the port number where the
+server is listening on. Future implementations would use the IP address provided for the server machine.
+
+UI. For this implementation, all user interaction is handled through a CLI. The details of the messages are encapsulated
+in the client implementation, and prompts the user for information required to build those message details.
+
+Structure. Client.py is the client implementation, server.py is the server implementation, and
+messages/clientMessages.py are the messages. Data is stored in /data/[username].txt in json format.
+
 
 
 
