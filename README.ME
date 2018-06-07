@@ -38,7 +38,9 @@ in the client implementation, and prompts the user for information required to b
 Structure. Client.py is the client implementation, server.py is the server implementation, and
 messages/clientMessages.py are the messages. Data is stored in /data/[username].txt in json format.
 
+Robust. This implementation checks to ensure that the message code is recognized, and then sends / receives messages
+based on that value. However, because the information is not encrypted (for this implementation, although it would be
+in the future) packet sniffing might reveal its contents.
 
-
-
+I did not implement the extra credit.
 

@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="07d898e9-3964-4a17-9e42-4ff97b80fc40" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/yacp/main.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.ME" afterPath="$PROJECT_DIR$/README.ME" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/yacp/client.py" afterPath="$PROJECT_DIR$/yacp/client.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/yacp/messages/clientMessages.py" afterPath="$PROJECT_DIR$/yacp/messages/clientMessages.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/yacp/data/Ross.txt" afterPath="$PROJECT_DIR$/yacp/data/Ross.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/yacp/server.py" afterPath="$PROJECT_DIR$/yacp/server.py" />
     </list>
     <ignored path="CS544.iws" />
@@ -28,11 +26,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="README.ME" pinned="false" current-in-tab="true">
+      <file leaf-file-name="README.ME" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/README.ME">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="600">
-              <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+            <state relative-caret-position="375">
+              <caret line="25" column="70" selection-start-line="25" selection-start-column="70" selection-end-line="25" selection-end-column="70" />
               <folding />
             </state>
           </provider>
@@ -41,8 +39,8 @@
       <file leaf-file-name="server.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/yacp/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="20" selection-start-line="4" selection-start-column="20" selection-end-line="4" selection-end-column="20" />
+            <state relative-caret-position="270">
+              <caret line="18" column="14" selection-start-line="18" selection-start-column="14" selection-end-line="18" selection-end-column="14" />
               <folding>
                 <element signature="e#221#234#0" expanded="true" />
               </folding>
@@ -70,11 +68,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="client.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="client.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/yacp/client.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="4" selection-end-column="35" />
+            <state relative-caret-position="225">
+              <caret line="15" column="14" selection-start-line="15" selection-start-column="14" selection-end-line="15" selection-end-column="14" />
               <folding>
                 <element signature="e#172#222#0" expanded="true" />
               </folding>
@@ -129,10 +127,10 @@
         <option value="$PROJECT_DIR$/yacp/data/t.txt" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/.todo" />
-        <option value="$PROJECT_DIR$/yacp/client.py" />
-        <option value="$PROJECT_DIR$/yacp/server.py" />
         <option value="$PROJECT_DIR$/yacp/messages/clientMessages.py" />
         <option value="$PROJECT_DIR$/README.ME" />
+        <option value="$PROJECT_DIR$/yacp/server.py" />
+        <option value="$PROJECT_DIR$/yacp/client.py" />
       </list>
     </option>
   </component>
@@ -869,16 +867,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/yacp/server.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="20" selection-start-line="4" selection-start-column="20" selection-end-line="4" selection-end-column="20" />
-          <folding>
-            <element signature="e#221#234#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/yacp/messages/clientMessages.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
@@ -887,21 +875,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/yacp/client.py">
+    <entry file="file://$PROJECT_DIR$/README.ME">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="4" selection-end-column="35" />
+        <state relative-caret-position="375">
+          <caret line="25" column="70" selection-start-line="25" selection-start-column="70" selection-end-line="25" selection-end-column="70" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/yacp/server.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="18" column="14" selection-start-line="18" selection-start-column="14" selection-end-line="18" selection-end-column="14" />
           <folding>
-            <element signature="e#172#222#0" expanded="true" />
+            <element signature="e#221#234#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.ME">
+    <entry file="file://$PROJECT_DIR$/yacp/client.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="225">
+          <caret line="15" column="14" selection-start-line="15" selection-start-column="14" selection-end-line="15" selection-end-column="14" />
+          <folding>
+            <element signature="e#172#222#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

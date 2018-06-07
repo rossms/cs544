@@ -16,7 +16,7 @@ from messages.clientMessages import *
 
 # global variables
 
-version = "1.0"
+version = "1.1"
 
 # functions
 

@@ -13,7 +13,7 @@ from threading import *
 from select import select
 
 # global variables
-version = "1.0"
+version = "1.1"
 keepOpen = 1
 
 # functions
