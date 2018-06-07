@@ -34,6 +34,10 @@ class clientObj(Thread):
         self.state = 1
         self.start()
 
+    # Main run function. once a client object is created, the run function is called. This continues running
+    # for as long as the client is connected. Command is parsed from the client message and the resulting
+    # action is called based on that value. DFA state is also verified for commands.
+
     def run(self):
         print self.addr
         print 'Got connection from', self.addr
